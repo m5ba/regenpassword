@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Password</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        a {
+            text-decoration: none;
+            color: #007bff;
+        }
+        .container {
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            margin-left: 5px;
+            cursor: pointer;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 5px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%; /* Position tooltip above the icon */
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        input[type="text"], input[type="number"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        .password-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .toggle-password, .copy-password {
+            position: absolute;
+            right: 40px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            margin-left: 5px;
+        }
+        .copy-password {
+            right: 10px;
+        }
+        .generate-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        .generate-btn:hover {
+            background-color: #45a049;
+        }
+        .how-it-works {
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Generate Password</h1>
+    <p><a href="about.html">About</a></p>
+
+    <div class="container">
+        <label for="resource">Resource <span class="tooltip">❓
+            <span class="tooltiptext">Enter the resource name</span>
+        </span></label>
+        <input type="text" id="resource" placeholder="Enter resource">
+
+        <label for="login">Login <span class="tooltip">❓
+            <span class="tooltiptext">Enter your login name</span>
+        </span></label>
+        <input type="text" id="login" placeholder="Enter login">
+
+        <label for="secret">Secret <span class="tooltip">❓
+            <span class="tooltiptext">Enter your secret or key</span>
+        </span></label>
+        <input type="text" id="secret" placeholder="Enter secret">
+
+        <label for="iteration">Iteration <span class="tooltip">❓
+            <span class="tooltiptext">Enter iteration count (default is 1)</span>
+        </span></label>
+        <input type="number" id="iteration" value="1" min="1">
+
+        <button class="generate-btn" onclick="calculatePassword()">Calculate Password</button>
+
+        <label for="password">Generated Password</label>
+        <div class="password-container">
+            <input type="password" id="password" readonly>
+            <button class="toggle-password" onclick="togglePassword()">👁️</button>
+            <button class="copy-password" onclick="copyPassword()">📋</button>
+        </div>
+    </div>
+
+    <div class="how-it-works">
+        <h2>How it works</h2>
+        <p>This tool generates a password by concatenating the resource, login, iteration number, and secret, then hashing the resulting string with SHA-512. The hash is then encoded into Base64 with URL-safe replacements.</p>
+    </div>
+
+    <script>
+        // Function to calculate the password based on inputs
+        async function calculatePassword() {
+            const resource = document.getElementById('resource').value;
+            const login = document.getElementById('login').value;
+            const secret = document.getElementById('secret').value;
+            const iteration = document.getElementById('iteration').value;
+
+            const concatenatedString = resource + login + iteration + secret;
+            const hashBuffer = await computeSHA512(concatenatedString);
+
+            // Encode to Base64 and replace '+' with '-' and '/' with '_'
+            let encodedString = base64EncodeURLSafe(new Uint8Array(hashBuffer));
+            document.getElementById('password').value = encodedString;
+        }
+
+        // Function to compute SHA-512 hash
+        async function computeSHA512(text) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(text);
+            return await crypto.subtle.digest('SHA-512', data);
+        }
+
+        // Base64 encoding with URL-safe replacements
+        function base64EncodeURLSafe(byteArray) {
+            let base64String = btoa(String.fromCharCode(...byteArray));
+            return base64String.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '').substring(0, 16); // Remove padding '='
+        }
+
+        // Function to toggle password visibility
+        function togglePassword() {
+            const passwordField = document.getElementById('password');
+            const toggleButton = document.querySelector('.toggle-password');
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                toggleButton.textContent = "🙈"; // Change icon
+            } else {
+                passwordField.type = "password";
+                toggleButton.textContent = "👁️"; // Change icon
+            }
+        }
+
+        // Function to copy password to clipboard
+        function copyPassword() {
+            const passwordField = document.getElementById('password');
+            passwordField.select();
+            passwordField.setSelectionRange(0, 99999); // For mobile devices
+            document.execCommand("copy");
+
+            // Alert the user that the password is copied
+            alert("Password copied to clipboard!");
+        }
+    </script>
+
+</body>
+</html>
