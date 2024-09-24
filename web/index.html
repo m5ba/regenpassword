@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generate Password</title>
+    <title>Compute Password</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -100,7 +100,7 @@
 </head>
 <body>
 
-    <h1>Generate Password</h1>
+    <h1>Under Development - Compute Password</h1>
     <p><a href="about.html">About</a></p>
 
     <div class="container">
@@ -124,9 +124,12 @@
         </span></label>
         <input type="number" id="iteration" value="1" min="1">
 
+        <div class="acknowledgment">
+            By pressing the "Computed Password" button, you agree that you take all possible risks and the author of this web page is not responsible for any consequences.
+        </div>        
         <button class="generate-btn" onclick="calculatePassword()">Calculate Password</button>
 
-        <label for="password">Generated Password</label>
+        <label for="password">Computed Password for given Resource, Login, Iteration and Secret</label>
         <div class="password-container">
             <input type="password" id="password" readonly>
             <button class="toggle-password" onclick="togglePassword()">👁️</button>
