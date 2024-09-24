@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35303.130
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReGenPass", "ReGenPass\ReGenPass.csproj", "{EAC8E829-336A-4352-B2F8-CFA377E9479F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReGenPass.Tests", "ReGenPass.Tests\ReGenPass.Tests.csproj", "{4982EC2D-53E5-4530-8C5A-014C0787A86D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EAC8E829-336A-4352-B2F8-CFA377E9479F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAC8E829-336A-4352-B2F8-CFA377E9479F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAC8E829-336A-4352-B2F8-CFA377E9479F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAC8E829-336A-4352-B2F8-CFA377E9479F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4982EC2D-53E5-4530-8C5A-014C0787A86D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4982EC2D-53E5-4530-8C5A-014C0787A86D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4982EC2D-53E5-4530-8C5A-014C0787A86D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4982EC2D-53E5-4530-8C5A-014C0787A86D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1DCA1094-29EA-41CB-B4B6-C57ADFEE18DD}
+	EndGlobalSection
+EndGlobal
