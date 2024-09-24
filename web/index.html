@@ -125,11 +125,13 @@
         <input type="number" id="iteration" value="1" min="1">
 
         <div class="acknowledgment">
-            By pressing the "Computed Password" button, you agree that you take all possible risks and the author of this web page is not responsible for any consequences.
+            <i>
+            By pressing the "Compute Password" button, you agree that you take all possible risks and the author of this web page is not responsible for any consequences.
+            </i>
         </div>        
-        <button class="generate-btn" onclick="calculatePassword()">Calculate Password</button>
+        <button class="generate-btn" onclick="computePassword()">Compute Password</button>
 
-        <label for="password">Computed Password for given Resource, Login, Iteration and Secret</label>
+        <label for="password">Computed Password</label>
         <div class="password-container">
             <input type="password" id="password" readonly>
             <button class="toggle-password" onclick="togglePassword()">👁️</button>
@@ -144,7 +146,7 @@
 
     <script>
         // Function to calculate the password based on inputs
-        async function calculatePassword() {
+        async function computePassword() {
             const resource = document.getElementById('resource').value;
             const login = document.getElementById('login').value;
             const secret = document.getElementById('secret').value;
