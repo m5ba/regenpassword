@@ -147,7 +147,7 @@
     <script>
 
         const base64Chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
-        const symbolSet = '!@#$%^&*()'; // Custom set of 10 special symbols
+        const symbolSet = '!@#$%^~*()'; // Custom set of 10 special symbols
 
         // Function to calculate the password based on inputs
         async function computePassword() {
@@ -190,21 +190,6 @@
             document.getElementById('password').value = output;
         }
 
-        // Function to calculate the password based on inputs
-        async function computePassword1() {
-            const resource = document.getElementById('resource').value;
-            const login = document.getElementById('login').value;
-            const secret = document.getElementById('secret').value;
-            const iteration = document.getElementById('iteration').value;
-
-            const concatenatedString = resource + login + iteration + secret;
-            const hashBuffer = await computeSHA512(concatenatedString);
-
-            // Encode to Base64 and replace '+' with '-' and '/' with '_'
-            let encodedString = base64EncodeURLSafe(new Uint8Array(hashBuffer));
-            document.getElementById('password').value = encodedString;
-        }
-
         // Function to compute SHA-512 hash
         async function computeSHA512(text) {
             const encoder = new TextEncoder();
@@ -237,9 +222,6 @@
             passwordField.select();
             passwordField.setSelectionRange(0, 99999); // For mobile devices
             document.execCommand("copy");
-
-            // Alert the user that the password is copied
-            alert("Password copied to clipboard!");
         }
     </script>
 
