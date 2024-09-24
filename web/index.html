@@ -145,8 +145,53 @@
     </div>
 
     <script>
+
+        const base64Chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+        const symbolSet = '!@#$%^&*()'; // Custom set of 10 special symbols
+
         // Function to calculate the password based on inputs
         async function computePassword() {
+            const resource = document.getElementById('resource').value;
+            const login = document.getElementById('login').value;
+            const secret = document.getElementById('secret').value;
+            const iteration = document.getElementById('iteration').value;
+
+            const concatenatedString = resource + login + iteration + secret;
+            const hashBuffer = await computeSHA512(concatenatedString);
+
+            const sha512Array = new Uint8Array(hashBuffer);
+            
+            // Step 1: Define the output length based on the 1st byte
+            const outputLength = 16 + (sha512Array[0] % 4);
+
+            // Step 2: Define the positions for special symbols (using bytes 2, 3, 4)
+            const symbolPositions = [
+                sha512Array[1] % outputLength,
+                sha512Array[2] % outputLength,
+                sha512Array[3] % outputLength
+            ];
+
+            let output = '';
+
+            // Step 3: Build the output string
+            for (let i = 0; i < outputLength; i++) {
+                const byteValue = sha512Array[i + 4]; // Start from the 5th byte for encoding
+
+                if (symbolPositions.includes(i)) {
+                    // Use symbol if the current position matches any from symbolPositions
+                    output += symbolSet[byteValue % 10]; // Map byte value to one of the 10 symbols
+                } else {
+                    // Use Base64 character for all other positions
+                    output += base64Chars[byteValue % 64]; // Map byte value to Base64 character
+                }
+            }
+
+            // Place the generated password in the password field
+            document.getElementById('password').value = output;
+        }
+
+        // Function to calculate the password based on inputs
+        async function computePassword1() {
             const resource = document.getElementById('resource').value;
             const login = document.getElementById('login').value;
             const secret = document.getElementById('secret').value;
