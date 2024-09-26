@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReGenPass</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .header-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            margin-bottom: 10px;
+        }
+        a {
+            text-decoration: none;
+            color: #007bff;
+        }
+        .container {
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            margin-left: 5px;
+            cursor: pointer;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 5px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%; /* Position tooltip above the icon */
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        input[type="text"], input[type="number"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        .password-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .toggle-password, .copy-password {
+            position: absolute;
+            right: 40px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            margin-left: 5px;
+        }
+        .copy-password {
+            right: 10px;
+        }
+        .generate-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        .generate-btn:hover {
+            background-color: #45a049;
+        }
+        .how-it-works {
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-container"></div>
+        <h1>One Secret, Unique Passwords for Every Resource</h1>
+        <a href="about.html">How This Tool Works and Why It’s Secure</a>
+    </div>
+    
+    <div class="container">
+        <p style="font-style: italic; font-size: 0.8rem;">
+            All user input is processed locally within your browser. No data is stored, transmitted, or sent to any external server. Your information remains entirely private and secure on your device.
+        </p>
+        <label for="resource">Resource <span class="tooltip">❓
+            <span class="tooltiptext">Resource name. Keep it simple and consistent by using all lowercase or all uppercase letters, so it's easy to remember and reproduce later. Use names like 'gmail' or 'github' instead of 'Gmail.com' or 'GitHub.com'.</span>
+        </span></label>
+        <input type="text" id="resource" placeholder="Enter resource">
+
+        <label for="login">Login <span class="tooltip">❓
+            <span class="tooltiptext">Login name. Keep it simple and consistent by using all lowercase or all uppercase letters. For example, use 'johnsmith' instead of 'JohnSmith' or 'John_Smith'.</span>
+        </span></label>
+        <input type="text" id="login" placeholder="Enter login">
+
+        <label for="iteration">Iteration <span class="tooltip">❓
+            <span class="tooltiptext">Iteration count. Use this field when a resource requires a password change. Increasing the number allows you to generate a new password while keeping other details the same.</span>
+        </span></label>
+        <input type="number" id="iteration" value="1" min="1">        
+
+        <label for="secret">Secret <span class="tooltip">❓
+            <span class="tooltiptext">Secret key. Choose a secret that is complex enough to enhance security but still easy to remember. Avoid common words or patterns. Keep this secret private, as it’s the main component of your password’s security.</span>
+        </span></label>
+        <!--<input type="text" id="secret" placeholder="Enter secret">-->
+
+        <div class="password-container">
+            <input type="password" id="secret" placeholder="Enter secret">
+            <button class="toggle-password" onclick="togglePassword('secret')">👁️</button>
+        </div>        
+
+        <div id="duplicate-container" class="hidden">
+            <label for="secretDuplicate">Confirm Secret</label>
+            <div class="password-container">
+                <input type="password" id="secretCopy" placeholder="Confirm secret">
+                <button class="toggle-password" onclick="togglePassword('secretCopy')">👁️</button>
+            </div>
+        </div>
+
+        <div class="acknowledgment"  style="font-style: italic; font-size: 0.8rem;">
+            By pressing the "Compute Password" button, you agree that you take all possible risks and the author of this web page is not responsible for any consequences.
+        </div>        
+        <button class="generate-btn" onclick="computePassword()">Compute Password</button>
+
+        <label for="password">Computed Password</label>
+        <div class="password-container">
+            <input type="password" id="password" maxlength="20" style="font-family: monospace;">
+            <button class="toggle-password" onclick="togglePassword('password')">👁️</button>
+            <button class="copy-password" onclick="copyPassword()">📋</button>
+        </div>
+    </div>
+
+    <script>
+
+        const base64Chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+        const symbolSet = '!@#$%^~*()'; // Custom set of 10 special symbols
+
+        // Function to calculate the password based on inputs
+        async function computePassword() {
+            const resource = document.getElementById('resource').value;
+            const login = document.getElementById('login').value;
+            const secret = document.getElementById('secret').value;
+            const iteration = document.getElementById('iteration').value;
+            const secretCopy = document.getElementById('secretCopy').value;
+
+            if (secret !== secretCopy) {
+                alert("Secrets do not match!");
+                return;
+            }            
+
+            const concatenatedString = resource + login + iteration + secret;
+            const hashBuffer = await computeSHA512(concatenatedString);
+
+            const sha512Array = new Uint8Array(hashBuffer);
+            
+            // Step 1: Define the output length based on the 1st byte
+            const outputLength = 16 + (sha512Array[0] % 4);
+
+            // Step 2: Define the positions for special symbols (using bytes 2, 3, 4)
+            const symbolPositions = [
+                sha512Array[1] % outputLength,
+                sha512Array[2] % outputLength,
+                sha512Array[3] % outputLength
+            ];
+
+            let output = '';
+
+            // Step 3: Build the output string
+            for (let i = 0; i < outputLength; i++) {
+                const byteValue = sha512Array[i + 4]; // Start from the 5th byte for encoding
+
+                if (symbolPositions.includes(i)) {
+                    // Use symbol if the current position matches any from symbolPositions
+                    output += symbolSet[byteValue % 10]; // Map byte value to one of the 10 symbols
+                } else {
+                    // Use Base64 character for all other positions
+                    output += base64Chars[byteValue % 64]; // Map byte value to Base64 character
+                }
+            }
+
+            // Place the generated password in the password field
+            document.getElementById('password').value = output;
+        }
+
+        // Function to compute SHA-512 hash
+        async function computeSHA512(text) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(text);
+            return await crypto.subtle.digest('SHA-512', data);
+        }
+
+        // Base64 encoding with URL-safe replacements
+        function base64EncodeURLSafe(byteArray) {
+            let base64String = btoa(String.fromCharCode(...byteArray));
+            return base64String.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '').substring(0, 16); // Remove padding '='
+        }
+
+        // Function to toggle password visibility
+        function togglePassword() {
+            const passwordField = document.getElementById('password');
+            const toggleButton = document.querySelector('.toggle-password');
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                toggleButton.textContent = "🙈"; // Change icon
+            } else {
+                passwordField.type = "password";
+                toggleButton.textContent = "👁️"; // Change icon
+            }
+        }
+
+        function copyPassword() {
+            const passwordField = document.getElementById('password');
+            const password = passwordField.value;
+
+            // Create a temporary element to copy the password value
+            const tempInput = document.createElement('input');
+            document.body.appendChild(tempInput);
+            tempInput.value = password;
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+        }
+
+
+        function togglePassword(fieldId) {
+            const passwordField = document.getElementById(fieldId);
+            const toggleButton = passwordField.nextElementSibling;
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                toggleButton.textContent = "🙈"; // Change icon to hide
+            } else {
+                passwordField.type = "password";
+                toggleButton.textContent = "👁️"; // Change icon to show
+            }
+          
+    }        
+    </script>
+
+</body>
+</html>
