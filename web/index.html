@@ -161,7 +161,8 @@
 
     <script>
 
-        const base64Chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+        // note this is critical constant any change would break compatibility
+        const base64Chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_'; // modified base64
         const symbolSet = '!@#$%^~*()'; // Custom set of 10 special symbols
 
         // Function to calculate the password based on inputs
@@ -171,6 +172,16 @@
             const secret = document.getElementById('secret').value;
             const iteration = document.getElementById('iteration').value;
             const secretCopy = document.getElementById('secretCopy').value;
+            
+            if (!resource) {
+                alert("Resource cannot be empty.");
+                return;
+            }
+            
+            if (!secret || secret.length < 5) {
+                alert("Secret must be at least 5 characters long.");
+                return;
+            }
 
             if (secret !== secretCopy) {
                 alert("Secrets do not match!");
